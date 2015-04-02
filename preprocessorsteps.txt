@@ -1,0 +1,11 @@
+steps:
+	1. read directory
+	2. for each file in the format "edrm-enron-v2_.*-._xml\.zip"
+		2.a store the name
+		2.b. extract to a folder
+		2.c. for each text folder
+			2.c.1. switch to the folder
+			2.c.1. cat the text files together into the parent directory
+		2.d. switch back to the parent directory
+		2.e. cat all the text files together into the staging directory
+	3. cat all the staged text files together 
