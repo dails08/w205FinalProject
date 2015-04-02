@@ -1,11 +1,12 @@
-from os import listdir
+import os
 import re
+import sys
 
 def main(argv):
 	keptFiles = []
 	keptRE = re.compile("edrm-enron-v2_.*-._xml\.zip")
 
-	for filename in os.lisdir(argv[0]):
+	for filename in os.listdir("."):
 		if (keptRE.match(filename)):
 			print filename
 	
