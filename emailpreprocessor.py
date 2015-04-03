@@ -33,7 +33,7 @@ def main(argv):
 		#for error checking, print the filename
 		print filename
 		#define it as a zip file
-		z = zipfile.ZipFile(filename, 'r')
+		z = zipfile.ZipFile(baseDir + filename, 'r')
 		#pull out the abbreviated name of the emailer
 		shortname = re.match("edrm-enron-v2_(.*-.*)_xml\.zip", filename).group(1)
 		#make a folder just for them
