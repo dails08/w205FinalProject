@@ -16,10 +16,12 @@ def main(argv):
 	
 	#the base directory given at the cli
 	baseDir = argv[1]
+	#the place to put the totals
+	destinationDir = argv[2]
 	
 	#make a directory to store the catted emails
-	if not os.path.exists(baseDir + "/totals"):
-			os.makedirs(baseDir + "/totals")
+	if not os.path.exists(destinationDir + "/totals"):
+			os.makedirs(destinationDir + "/totals")
 	
 	#find the zip files that match the format
 	for filename in os.listdir(baseDir):
