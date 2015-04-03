@@ -61,7 +61,7 @@ def main(argv):
 					#close it
 					emailText.close()
 		#make a file for the catted emails
-		individualTotal = open(baseDir + "/totals/" + shortname + ".txt", 'w')
+		individualTotal = open(destinationDir + "totals/" + shortname + ".txt", 'w')
 		#save the catted total there
 		individualTotal.write(totalText)
 		#and close it
