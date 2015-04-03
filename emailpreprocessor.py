@@ -15,6 +15,9 @@ def main(argv):
 	
 	baseDir = argv[1]
 	
+	if not os.path.exists(baseDir + "/totals"):
+			os.makedirs(baseDir + "/totals")
+	
 	for filename in os.listdir(baseDir):
 		if (keptRE.match(filename)):
 			keptFiles.append(filename)
@@ -27,6 +30,17 @@ def main(argv):
 		if not os.path.exists(baseDir + "/" + shortname):
 			os.makedirs(baseDir + "/" + shortname)
 		z.extractall(baseDir + "/" + shortname)
+		totalText = ""
+		for lineEntry in os.listdir(baseDir + "/" + shortname):
+			if (re.match("text_.*", lineEntry)):
+				textDirectory = baseDir + "/" + shortname + "/" + lineEntry
+				for textFile in os.listdir(textDirectory):
+					emailText = open(textDirectory + "/" + textFile, 'r')
+					totalText = totalText + emailText.read()
+					emailText.close()
+		individualTotal = open(baseDir + "/totals/" + shortname + ".txt", 'w')
+		individualTotal.write(totalText)
+		individualTotal.close() 
 		
 		
 		
