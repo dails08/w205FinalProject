@@ -4,6 +4,11 @@ import sys
 from subprocess import call
 import zipfile
 
+#this script accepts an argument consisting of a directory.
+#It finds all the files in that directory that match the
+#Enron filename format and extracts them to folders that
+#match the name of the person who wrote the emails.
+
 def main(argv):
 	keptFiles = []
 	keptRE = re.compile("edrm-enron-v2_.*-.*_xml\.zip")
