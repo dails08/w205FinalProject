@@ -20,8 +20,8 @@ def main(argv):
 	destinationDir = argv[2]
 	
 	#make a directory to store the catted emails
-	if not os.path.exists(destinationDir + "/totals"):
-			os.makedirs(destinationDir + "/totals")
+	if not os.path.exists(destinationDir + "totals"):
+			os.makedirs(destinationDir + "totals")
 	
 	#find the zip files that match the format
 	for filename in os.listdir(baseDir):
