@@ -36,7 +36,7 @@ def main(argv):
 		try:
 			z = zipfile.ZipFile(baseDir + filename, 'r')
 		except zipfile.BadZipfile as e:
-			print "Problem with the zip file: " + e
+			print e
 			continue
 		#pull out the abbreviated name of the emailer
 		shortname = re.match("edrm-enron-v2_(.*-.*)_xml\.zip", filename).group(1)
