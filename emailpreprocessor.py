@@ -35,7 +35,7 @@ def main(argv):
 		#define it as a zip file
 		try:
 			z = zipfile.ZipFile(baseDir + filename, 'r')
-		except BadZipfile as e:
+		except zipfile.BadZipfile as e:
 			print "Problem with the zip file: " + e
 			continue
 		#pull out the abbreviated name of the emailer
