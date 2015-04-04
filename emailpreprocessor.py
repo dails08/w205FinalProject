@@ -33,7 +33,10 @@ def main(argv):
 		#for error checking, print the filename
 		print filename
 		#define it as a zip file
-		z = zipfile.ZipFile(baseDir + filename, 'r')
+		try:
+			z = zipfile.ZipFile(baseDir + filename, 'r')
+		except BadZipfile as e:
+			print "Problem with the zip file: " + e
 		#pull out the abbreviated name of the emailer
 		shortname = re.match("edrm-enron-v2_(.*-.*)_xml\.zip", filename).group(1)
 		#make a folder just for them
