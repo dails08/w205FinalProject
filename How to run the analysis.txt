@@ -1,0 +1,16 @@
+1. Define two EBS volumes, 1 250GB, 1 100GB.
+2. Create and EC2 instance.  Micro works fine.
+3. In the EC2 instance, mount the Enron dataset in the 250GB volume and label it "/data".  In this volume you'll find two top-level folders.  The one ending in "2" is the directory that contains the data we're going to use.
+4. Format the 100GB instance and label it "/working"
+5. In the /working directory, create a folder to store the concatenated emails.  
+6. Copy the emailpreprocessor.py into your EC2 instance.
+7. Run emailpreprocessor.py.  It takes two arguments: arg1 is the directory mentioned in step 3.  arg2 is the directory we mentioned in Step 5. it'll take a while, like maybe 30-40 minutes.
+8. You know have a folder full of one file per email address containing all of the emails sent by that person.
+9. Make an S3 bucket and call it whatever you want.  Within it, create a folder named "code" and a folder named "total"
+10. Sync the folder with the email files with the "total" s3 folder.
+11. Put the EmailProject.py file in the "code" folder
+12. Start an EMR cluster and record its id.
+13. Run the following command.  Note that the last s3 folder must not exist when you run the command; EMR will make it when it dumps the results
+
+aws emr add-steps --cluster-id <emr cluster id> --steps Type=STREAMING,Name='Sent Emails Count',ActionOnFailure=CONTINUE,Args=--files,s3://<your bucket>/code/EmailProject.py,-mapper,EmailProject.py,-reducer,aggregate,-input,s3://<your bucket>/total,-output,s3://<your bucket>/<new folder>
+
