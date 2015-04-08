@@ -5,6 +5,7 @@ import zipfile
 import shutil
 import boto
 from boto.s3.key import Key
+from boto.s3.connection import S3Connection
 
 #this script accepts an argument consisting of a directory.
 #It finds all the files in that directory that match the
@@ -15,8 +16,8 @@ def main(argv):
 	
 	#S3 context
 	#GET IT?!
-	#sss = S3Connection("AKIAJVNFF62PXTLWRK6A", "eJt/Ix8mN5xneRPF+7TssnArue6SpOmt7Bi3iJeX")
-	conn = boto.connect_s3()
+	conn = S3Connection("AKIAJVNFF62PXTLWRK6A", "eJt/Ix8mN5xneRPF+7TssnArue6SpOmt7Bi3iJeX")
+	#conn = boto.connect_s3()
 	bucket = conn.get_bucket("chrisdailey1-enron")
 	k = Key(bucket)
 	
