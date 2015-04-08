@@ -16,7 +16,7 @@ def main(argv):
 	
 	#S3 context
 	#GET IT?!
-	conn = S3Connection("AKIAJVNFF62PXTLWRK6A", "eJt/Ix8mN5xneRPF+7TssnArue6SpOmt7Bi3iJeX")
+	conn = S3Connection("xxx", "yyy")
 	#conn = boto.connect_s3()
 	bucket = conn.get_bucket("chrisdailey1-enron")
 	k = Key(bucket)
