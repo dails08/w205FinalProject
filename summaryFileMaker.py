@@ -16,9 +16,11 @@ def main(argv):
 	
 	#get credentials
 	creds = open("credentials", 'r')
-	AWSKeyID = creds.readline()
-	AWSSecret = creds.readline()
+	AWSKeyID = creds.readline().rstrip('\n')
+	AWSSecret = creds.readline().rstrip('\n')
 	creds.close()
+	print AWSKeyID
+	print AWSSecret
 	
 	
 	#S3 context
@@ -91,8 +93,6 @@ def main(argv):
 					print "Uploading "+textFile
 					k.set_contents_from_filename(textDirectory + "/" + textFile)
 					
-					#close it
-					emailText.close()
 				
 			listFile.close()
 		
