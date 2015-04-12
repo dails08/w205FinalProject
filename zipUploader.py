@@ -50,7 +50,7 @@ def main(argv):
 			print "Setting key"
 			k.key = "zips/" + filename
 			print "Uploading " + filename
-			k.set_contents_from_filename(filename)
+			k.set_contents_from_filename(baseDir + "/" + filename)
 	listFile.close()
 
 		
