@@ -37,10 +37,10 @@ def main(argv):
 	#the base directory given at the cli
 	baseDir = argv[1]
 	
-	listFile = open("fileList.txt", 'a')
 	
 	#find the zip files that match the format
 	for filename in os.listdir(baseDir):
+		listFile = open("fileList.txt", 'a')
 		if (keptRE.match(filename)):
 			#for error checking, print the filename
 			print "Matched " + filename
@@ -49,9 +49,13 @@ def main(argv):
 			#upload it
 			print "Setting key"
 			k.key = "zips/" + filename
-			print "Uploading " + filename
-			k.set_contents_from_filename(baseDir + "/" + filename)
-	listFile.close()
+			if (k.exists()):
+				print "Already exists.  Skipping."
+				listFile.write(filename)
+			else:
+				print "Uploading " + filename
+				k.set_contents_from_filename(baseDir + "/" + filename)
+			listFile.close()
 
 		
 		
