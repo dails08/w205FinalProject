@@ -45,13 +45,12 @@ def main(argv):
 			#for error checking, print the filename
 			print "Matched " + filename
 			print "Writing "+ filename
-			listFile.write(filename)
+			listFile.write(filename + "\n")
 			#upload it
 			print "Setting key"
 			k.key = "zips/" + filename
 			if (k.exists()):
 				print "Already exists.  Skipping."
-				listFile.write(filename + "\n")
 			else:
 				print "Uploading " + filename
 				k.set_contents_from_filename(baseDir + "/" + filename)
