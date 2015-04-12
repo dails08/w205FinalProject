@@ -14,8 +14,8 @@ def main(argv):
 	
 	#get credentials
 	creds = open("credentials", 'r')
-	AWSKeyID = creds.readline()
-	AWSSecret = creds.readline()
+	AWSKeyID = creds.readline().rstrip()
+	AWSSecret = creds.readline().rstrip()
 	creds.close()
 	
 	
