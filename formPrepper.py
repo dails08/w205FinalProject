@@ -46,7 +46,7 @@ def main(argv):
 			#only the text of the email.  I think I've seen folders with more than one text
 			#folder, so go through them one by one and if they match the name format
 			#of the text-only folders, use that folder
-			nextFiles = os.listdir(baseDir + "/" + shortname
+			nextFiles = os.listdir(baseDir + "/" + shortname)
 			random.shuffle(nextFiles)
 			for lineEntry in nextFiles:
 				#Check for that format I mentioned
