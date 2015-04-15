@@ -18,6 +18,7 @@ def main(argv):
 	fieldRE = re.compile("^.+: ")
 	endRE = re.compile("\*\*\*\*\*\*\*\*\*\*\*")
 	originalRE = re.compile("-----Original Message-----")
+	forwardedRE = re.compile("---------------------- Forwarded by")
 	
 	#the base directory given at the cli
 	baseDir = argv[1]
@@ -68,18 +69,20 @@ def main(argv):
 						textFile = open(textDirectory + "/" + textFiles[i], 'r')
 						print "Chose " + textFiles[i]
 						for line in textFile:
-							if fieldRE.match(line):
+							pastFields = False
+							if fieldRE.match(line) and not pastFields:
 								print "Skipping field: " + line
 								continue
-							if endRE.match(line) or originalRE.search(line):
+							if endRE.match(line) or originalRE.search(line) forwardedRE.search(line):
 								print "Breaking: " + line
 								break
 							emailBody = emailBody + re.sub("\"", '', line.strip()) + " "
+							pastFields = true
 						if len(emailBody) > 10000:
 							print "Email too long."
 							break
 						textFile.close()
-						print "Writing:\n====" + emailBody + "\n===="
+						print "Writing:\n====\n" + emailBody + "\n====\n"
 						resultsFile = open(argv[2]+"/results.csv",'a')
 						resultsFile.write("\"" + emailBody + "\"\n")
 						resultsFile.close()
