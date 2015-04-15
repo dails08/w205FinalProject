@@ -17,7 +17,7 @@ def main(argv):
 	
 	fieldRE = re.compile("^.+: ")
 	endRE = re.compile("\*\*\*\*\*\*\*\*\*\*\*")
-	originalRE = re.compile("-----")
+	originalRE = re.compile("-----Original Message-----")
 	
 	#the base directory given at the cli
 	baseDir = argv[1]
@@ -71,7 +71,7 @@ def main(argv):
 							if fieldRE.match(line):
 								print "Skipping field: " + line
 								continue
-							if endRE.match(line) or originalRE.match(line):
+							if endRE.match(line) or originalRE.search(line):
 								print "Breaking: " + line
 								break
 							emailBody = emailBody + re.sub("\"", '', line.strip()) + " "
