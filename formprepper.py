@@ -81,6 +81,9 @@ def main(argv):
 						if len(emailBody) > 10000:
 							print "Email too long."
 							break
+						if len(emailBody.strip()) < 10:
+							print "Email too short."
+							break
 						textFile.close()
 						print "Writing:\n====\n" + emailBody + "\n====\n"
 						resultsFile = open(argv[2]+"/results.csv",'a')
