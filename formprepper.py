@@ -72,13 +72,12 @@ def main(argv):
 								continue
 							if endRE.match(line) or originalRE.match(line):
 								break
-							emailBody = emailBody + line
+							emailBody = emailBody + re.sub("\"", '', line.strip()) + " "
 						if len(emailBody) > 10000:
 							break
 						textFile.close()
 						resultsFile = open(argv[2]+"/results.csv",'a')
-						resultsFile.write("\"" + emailBody + "\"")
-						resultsFile.write("\n")
+						resultsFile.write("\"" + emailBody + "\"\n")
 						resultsFile.close()
 			
 			#delete their special folder since it's not needed anymore
