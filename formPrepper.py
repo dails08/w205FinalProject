@@ -57,7 +57,7 @@ def main(argv):
 					textFiles = os.listdir(textDirectory)
 					random.shuffle(textFiles)
 					for i in range(0,100):
-						textFile = open(textFiles[i], 'r')
+						textFile = open(textDirectory + "/" + textFiles[i], 'r')
 						print "Chose " + textFile
 						emails.append(testFile.read())
 						textFile.close()
