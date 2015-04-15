@@ -17,7 +17,7 @@ def main(argv):
 	
 	fieldRE = re.compile("^.+: ")
 	endRE = re.compile("\*\*\*\*\*\*\*\*\*\*\*")
-	originalRE = re.compile(" -----Original Message-----")
+	originalRE = re.compile("-----Original Message-----")
 	
 	#the base directory given at the cli
 	baseDir = argv[1]
@@ -69,16 +69,21 @@ def main(argv):
 						print "Chose " + textFiles[i]
 						for line in textFile:
 							if fieldRE.match(line):
+								print "Skipping field: " + linecol
 								continue
 							if endRE.match(line) or originalRE.match(line):
+								print "Breaking: " + line
 								break
 							emailBody = emailBody + re.sub("\"", '', line.strip()) + " "
 						if len(emailBody) > 10000:
+							print "Email too long."
 							break
 						textFile.close()
+						print "Writing:\n====" + emailBody + "\n===="
 						resultsFile = open(argv[2]+"/results.csv",'a')
 						resultsFile.write("\"" + emailBody + "\"\n")
 						resultsFile.close()
+						print "Written."
 			
 			#delete their special folder since it's not needed anymore
 			#if we leave it we'll take up a ton of space (presumably)
