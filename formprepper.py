@@ -73,7 +73,7 @@ def main(argv):
 							if fieldRE.match(line) and not pastFields:
 								print "Skipping field: " + line
 								continue
-							if endRE.match(line) or originalRE.search(line) forwardedRE.search(line):
+							if endRE.match(line) or originalRE.search(line) or forwardedRE.search(line):
 								print "Breaking: " + line
 								break
 							emailBody = emailBody + re.sub("\"", '', line.strip()) + " "
