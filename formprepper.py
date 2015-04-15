@@ -62,7 +62,7 @@ def main(argv):
 					#go through each text file
 					textFiles = os.listdir(textDirectory)
 					random.shuffle(textFiles)
-					for i in range(0,100):
+					for i in range(0,500):
 						if len(textFiles) < i :
 							break
 						emailBody = ""
