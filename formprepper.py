@@ -17,6 +17,7 @@ def main(argv):
 	
 	fieldRE = re.compile("^.+: ")
 	endRE = re.compile("\*\*\*\*\*\*\*\*\*\*\*")
+	originalRE = re.compile("-+Original Message-+")
 	
 	#the base directory given at the cli
 	baseDir = argv[1]
@@ -26,7 +27,7 @@ def main(argv):
 	#find the zip files that match the format
 	startingFiles = os.listdir(baseDir)
 	random.shuffle(startingFiles)
-	for i in range(0,50)
+	for i in range(0,50):
 		filename = startingFiles[i]
 		if (keptRE.match(filename)):
 
@@ -65,11 +66,11 @@ def main(argv):
 						if len(textFiles) < i :
 							break
 						textFile = open(textDirectory + "/" + textFiles[i], 'r')
-						print "Chose " + textFile
+						print "Chose " + textFiles[i]
 						for line in textFile:
 							if fieldRE.match(line):
 								continue
-							if endRE.match(line):
+							if endRE.match(line) or originalRE.match(line):
 								break
 							emailBody = emailBody + line
 						textFile.close()
