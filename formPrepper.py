@@ -15,6 +15,9 @@ def main(argv):
 	#The format for the xml, text-only emails
 	keptRE = re.compile("edrm-enron-v2_.*-.*_xml\.zip")
 	
+	fieldRE = re.compile("^.+: ")
+	endRE = re.compile("\*\*\*\*\*\*\*\*\*\*\*")
+	
 	#the base directory given at the cli
 	baseDir = argv[1]
 	#the place to put the csv
@@ -23,7 +26,8 @@ def main(argv):
 	#find the zip files that match the format
 	startingFiles = os.listdir(baseDir)
 	random.shuffle(startingFiles)
-	for filename in startingFiles:
+	for i in range(0,50)
+		filename = startingFiles[i]
 		if (keptRE.match(filename)):
 
 			print "Matched " + filename
@@ -42,7 +46,7 @@ def main(argv):
 			print "Unzipping"
 			z.extractall(baseDir + "/" + shortname)
 				
-			#the email unzips into a couple of different folder, one of which stores
+			#the email unzips into a couple of different folders, one of which stores
 			#only the text of the email.  I think I've seen folders with more than one text
 			#folder, so go through them one by one and if they match the name format
 			#of the text-only folders, use that folder
@@ -56,15 +60,23 @@ def main(argv):
 					#go through each text file
 					textFiles = os.listdir(textDirectory)
 					random.shuffle(textFiles)
+					emailBody = ""
 					for i in range(0,100):
+						if len(textFiles) < i :
+							break
 						textFile = open(textDirectory + "/" + textFiles[i], 'r')
 						print "Chose " + textFile
-						emails.append(testFile.read())
+						for line in textFile:
+							if fieldRE.match(line):
+								continue
+							if endRE.match(line):
+								break
+							emailBody = emailBody + line
 						textFile.close()
-					resultsFile = open(argv[2]+"/results.csv",'a')
-					resultsFile.write(emails)
-					resultsFile.write("\n")
-					resultsFile.close()
+						resultsFile = open(argv[2]+"/results.csv",'a')
+						resultsFile.write("\"" + emailBody + "\"")
+						resultsFile.write("\n")
+						resultsFile.close()
 			
 			#delete their special folder since it's not needed anymore
 			#if we leave it we'll take up a ton of space (presumably)
