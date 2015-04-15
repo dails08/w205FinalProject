@@ -28,8 +28,9 @@ def main(argv):
 	#find the zip files that match the format
 	startingFiles = os.listdir(baseDir)
 	random.shuffle(startingFiles)
-	for i in range(0,100):
-		filename = startingFiles[i]
+	#for i in range(0,100):
+	for filename in startingFiles
+		#filename = startingFiles[i]
 		if (keptRE.match(filename)):
 
 			print "Matched " + filename
