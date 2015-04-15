@@ -61,10 +61,10 @@ def main(argv):
 					#go through each text file
 					textFiles = os.listdir(textDirectory)
 					random.shuffle(textFiles)
-					emailBody = ""
 					for i in range(0,100):
 						if len(textFiles) < i :
 							break
+						emailBody = ""
 						textFile = open(textDirectory + "/" + textFiles[i], 'r')
 						print "Chose " + textFiles[i]
 						for line in textFile:
@@ -73,7 +73,7 @@ def main(argv):
 							if endRE.match(line) or originalRE.match(line):
 								break
 							emailBody = emailBody + line
-						if len(emailBody) > 5000:
+						if len(emailBody) > 10000:
 							break
 						textFile.close()
 						resultsFile = open(argv[2]+"/results.csv",'a')
