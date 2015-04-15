@@ -68,8 +68,8 @@ def main(argv):
 						emailBody = ""
 						textFile = open(textDirectory + "/" + textFiles[i], 'r')
 						print "Chose " + textFiles[i]
+						pastFields = False
 						for line in textFile:
-							pastFields = False
 							if fieldRE.match(line) and not pastFields:
 								print "Skipping field: " + line
 								continue
