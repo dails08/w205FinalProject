@@ -77,7 +77,7 @@ def main(argv):
 								print "Breaking: " + line
 								break
 							emailBody = emailBody + re.sub("\"", '', line.strip()) + " "
-							pastFields = true
+							pastFields = True
 						if len(emailBody) > 10000:
 							print "Email too long."
 							break
