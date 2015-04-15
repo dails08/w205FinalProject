@@ -17,7 +17,7 @@ def main(argv):
 	
 	fieldRE = re.compile("^.+: ")
 	endRE = re.compile("\*\*\*\*\*\*\*\*\*\*\*")
-	originalRE = re.compile("-+Original Message-+")
+	originalRE = re.compile(" -----Original Message-----")
 	
 	#the base directory given at the cli
 	baseDir = argv[1]
