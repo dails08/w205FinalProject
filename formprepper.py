@@ -29,7 +29,7 @@ def main(argv):
 	startingFiles = os.listdir(baseDir)
 	random.shuffle(startingFiles)
 	#for i in range(0,100):
-	for filename in startingFiles
+	for filename in startingFiles:
 		#filename = startingFiles[i]
 		if (keptRE.match(filename)):
 
