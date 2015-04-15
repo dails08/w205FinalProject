@@ -69,7 +69,7 @@ def main(argv):
 						print "Chose " + textFiles[i]
 						for line in textFile:
 							if fieldRE.match(line):
-								print "Skipping field: " + linecol
+								print "Skipping field: " + line
 								continue
 							if endRE.match(line) or originalRE.match(line):
 								print "Breaking: " + line
