@@ -73,6 +73,8 @@ def main(argv):
 							if endRE.match(line) or originalRE.match(line):
 								break
 							emailBody = emailBody + line
+						if len(emailBody) > 5000:
+							break
 						textFile.close()
 						resultsFile = open(argv[2]+"/results.csv",'a')
 						resultsFile.write("\"" + emailBody + "\"")
