@@ -58,12 +58,13 @@ def main(argv):
 					random.shuffle(textFiles)
 					for i in range(0,100):
 						textFile = open(textDirectory + "/" + textFiles[i], 'r')
-						print "Chose " + textFile
-						emails.append(testFile.read())
+						print "Chose " + textFiles[i]
+						emails.append(textFile.read())
 						textFile.close()
 					resultsFile = open(argv[2]+"/results.csv",'a')
-					resultsFile.write(emails)
-					resultsFile.write("\n")
+					for email in emails:
+						resultsFile.write(email)
+						resultsFile.write("\n")
 					resultsFile.close()
 			
 			#delete their special folder since it's not needed anymore
