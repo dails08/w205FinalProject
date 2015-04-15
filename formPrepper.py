@@ -21,7 +21,9 @@ def main(argv):
 	destinationDir = argv[2]
 	
 	#find the zip files that match the format
-	for filename in random.shuffle(os.listdir(baseDir)):
+	startingFiles = os.listdir(baseDir)
+	random.shuffle(startingFiles)
+	for filename in startingFiles:
 		if (keptRE.match(filename)):
 
 			print "Matched " + filename
@@ -44,15 +46,18 @@ def main(argv):
 			#only the text of the email.  I think I've seen folders with more than one text
 			#folder, so go through them one by one and if they match the name format
 			#of the text-only folders, use that folder
-			for lineEntry in random.shuffle(os.listdir(baseDir + "/" + shortname)):
+			nextFiles = os.listdir(baseDir + "/" + shortname
+			random.shuffle(nextFiles)
+			for lineEntry in nextFiles:
 				#Check for that format I mentioned
 				if (re.match("text_.*", lineEntry)):
 					#store the directory to make more readable code
 					textDirectory = baseDir + "/" + shortname + "/" + lineEntry
 					#go through each text file
-					textFiles = os.listdir(textDirectory):
+					textFiles = os.listdir(textDirectory)
+					random.shuffle(textFiles)
 					for i in range(0,100):
-						textFile = open(os.listdir(textDirectory)[random.randint(0, len(os.listdir(textFirectory)))], 'r')
+						textFile = open(textFiles[i], 'r')
 						print "Chose " + textFile
 						emails.append(testFile.read())
 						textFile.close()
