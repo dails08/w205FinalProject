@@ -38,7 +38,7 @@ def main(argv):
 	#print "Connecting"
 	#s3conn = S3Connection(aws_access_key_id=assumedRoleObject.credentials.access_key, aws_secret_access_key=assumedRoleObject.credentials.secret_key, security_token=assumedRoleObject.credentials.session_token)
 	#s3conn = S3Connection()
-	s3conn = S3Connection()
+	s3conn = boto.s3.connect_to_region("us-east-1")
 	#print "Connected"
 	
 	dateRE = re.compile("^Date: .*")
@@ -53,12 +53,12 @@ def main(argv):
 		if not s:
 			break
 		#download
-
+		s = s.strip()
 		zipbucket = s3conn.get_bucket("chrisdailey1-enron")
 		#print "Got bucket"
 		
 		k = Key(zipbucket)
-		k.key = "/zips/" + s
+		k.key = "/zips/"
 		#print "Saving"
 		k.get_contents_to_filename(s)
 		#print "Saved"
