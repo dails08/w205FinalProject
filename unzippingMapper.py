@@ -37,6 +37,7 @@ def main(argv):
 	# and list all buckets in the account that owns the role (the trusting account)
 	#print "Connecting"
 	#s3conn = S3Connection(aws_access_key_id=assumedRoleObject.credentials.access_key, aws_secret_access_key=assumedRoleObject.credentials.secret_key, security_token=assumedRoleObject.credentials.session_token)
+	#s3conn = S3Connection()
 	s3conn = S3Connection()
 	#print "Connected"
 	
@@ -57,7 +58,7 @@ def main(argv):
 		#print "Got bucket"
 		
 		k = Key(zipbucket)
-		k.key = "zips/" + s
+		k.key = "/zips/" + s
 		#print "Saving"
 		k.get_contents_to_filename(s)
 		#print "Saved"
