@@ -20,6 +20,8 @@ def processEmail(email):
     email = re.sub('[^\s]+@[^\s]+','',email)
     #Remove strings that start with </
     email = re.sub('</[^\s]+','',email)
+    #Remove numbers
+    email = re.sub('\S*\d\S*','', email)
     #Remove additional white spaces
     email = re.sub('[\s]+', ' ', email)
     #Replace #word with word
