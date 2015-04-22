@@ -1,63 +1,62 @@
-import nltkpreprocessor
+#!/usr/bin/python
 
-#initialize stopWords
+import nltk
+import nltkpreprocessor
+import re
+import sys
+
+# initialize stopWords
 stopWords = []
 
-#start replaceTwoOrMore
-def replaceTwoOrMore(s):
-    #look for 2 or more repetitions of character and replace with the character itself
-    pattern = re.compile(r"(.)\1{1,}", re.DOTALL)
-    return pattern.sub(r"\1\1", s)
-#end
+def printUsage():
+    print "featurevector.py <inputEmailFile>"
 
-#start getStopWordList
-def getStopWordList(stopWordListFileName):
-    #read the stopwords file and build a list
-    stopWords = []
-    stopWords.append('AT_USER')
-    stopWords.append('URL')
+def getStopWordList():
+    stopWords = nltk.corpus.stopwords.words('english')
+    # append any other stop words
+    # stopWords.append('word')
 
-    fp = open(stopWordListFileName, 'r')
-    line = fp.readline()
-    while line:
-        word = line.strip()
-        stopWords.append(word)
-        line = fp.readline()
-    fp.close()
     return stopWords
-#end
 
-#start getfeatureVector
 def getFeatureVector(email):
     featureVector = []
-    #split email into words
+
+    # split email into words
     words = email.split()
     for w in words:
-        #replace two or more with two occurrences
-        w = replaceTwoOrMore(w)
-        #strip punctuation
+        # strip punctuation
         w = w.strip('\'"?,.')
-        #check if the word stats with an alphabet
+        # check if the word stats with an alphabet
         val = re.search(r"^[a-zA-Z][a-zA-Z0-9]*$", w)
-        #ignore if it is a stop word
-        if(w in stopWords or val is None):
+        # ignore if it is a stop word or does not start with an alphabet
+        if (w in stopWords or val is None):
             continue
         else:
             featureVector.append(w.lower())
+
     return featureVector
-#end
 
-#Read the emails one by one and process it
-fp = open('data/sampleEmails.txt', 'r')
-line = fp.readline()
+def main(argv):
+    inputFile = argv[1]
 
-st = open('data/feature_list/stopwords.txt', 'r')
-stopWords = getStopWordList('data/feature_list/stopwords.txt')
+    # update the global stopWords list
+    stopWords = getStopWordList()
 
-while line:
-    processedEmail = processEmail(line)
-    featureVector = getFeatureVector(processedEmail)
-    print featureVector
-    line = fp.readline()
-#end loop
-fp.close()
+    fr = open(inputFile, 'rU')
+
+    # read the emails and process one by one
+    line = fr.readline()
+    while line:
+        processedEmail = nltkpreprocessor.processEmail(line)
+        featureVector = getFeatureVector(processedEmail)
+        print featureVector
+        line = fr.readline()
+
+    # close file handle
+    fr.close()
+
+if __name__ == "__main__":
+    if (len(sys.argv) != 2):
+        printUsage()
+    else:
+        main(sys.argv)
