@@ -10,10 +10,8 @@ featureList = []
 stopWords = []
 
 def printUsage():
-    print "featurevector.py <inputEmailFile> <isInputFileLabeled>"
-    print "e.g."
-    print "featurevector.py emails.txt false"
-    print "featurevector.py processedlabels.txt true"
+    print "featurevector.py <rawEmailFile> <featureVectorOutputFile>"
+    print "featurevector.py <labeledEmailFile>"
 
 def updateStopWordList():
     global stopWords
@@ -30,11 +28,12 @@ def getFeatureVector(email):
     for w in words:
         # strip punctuation
         w = w.strip('\'"?,.')
+
         # check if the word stats with an alphabet
         val = re.search(r"^[a-zA-Z][a-zA-Z0-9]*$", w)
 
         # ignore if it is a stop word or does not start with an alphabet
-        if (val is None or unicode(w, 'utf-8') in stopWords):
+        if (val is None or w in stopWords):
             continue
         else:
             featureVector.append(w.lower())
@@ -51,22 +50,31 @@ def getFeatures(email):
 
     return features
 
-def processRawEmails(inputFile):
+def processRawEmails(inputFile, outputFile):
     fr = open(inputFile, 'rU')
+    fw = open(outputFile, 'w')
+
+    featureList = []
 
     # read the emails and process one by one
     line = fr.readline()
     while line:
         processedEmail = nltkpreprocessor.processEmail(line)
         featureVector = getFeatureVector(processedEmail)
-        print featureVector
+        featureList.extend(featureVector)
         line = fr.readline()
 
-    # close file handle
+    # write feature list to output file
+    featureList = list(set(featureList))
+    for feature in featureList:
+        fw.write("{}\n".format(feature))
+
+    # close file handles
     fr.close()
+    fw.close()
 
 def processLabeledEmails(inputFile):
-
+    global featureList
     emailSentiments = []
 
     fr = open(inputFile, 'rU')
@@ -79,8 +87,8 @@ def processLabeledEmails(inputFile):
         processedEmail = nltkpreprocessor.processEmail(emailLine)
         featureVector = getFeatureVector(processedEmail)
         emailSentiments.append((featureVector, sentiment))
-        global featureList
         featureList.extend(featureVector)
+
         line = fr.readline()
 
     # close file handle
@@ -92,40 +100,57 @@ def processLabeledEmails(inputFile):
     # generate training set
     emailTrainingSet = nltk.classify.util.apply_features(getFeatures, emailSentiments)
 
-    # train the claffifier
+    # train the classifier
     classifier = nltk.NaiveBayesClassifier.train(emailTrainingSet)
 
     return classifier
 
 def testClassifier(classifier):
-    testEmails = ['class www.berkeley.edu link',
-                  'some mailto:bear@berkeley.edu link',
-                  'sample email']
+    testEmails = ['last questions',
+                  'contact tyrion lannister in corporate for bankruptcy questions',
+                  'family - they hope for some money from you',
+                  'URL=mailto:ceo@enron.com as the last contact',
+                  'winterfell is in westeros or essos?']
 
     for testEmail in testEmails:
         processedEmail = nltkpreprocessor.processEmail(testEmail)
-        print classifier.classify(getFeatures(getFeatureVector(processedEmail)))
+        featureVector = getFeatureVector(processedEmail)
+        features = getFeatures(featureVector)
+        emailSentiment = classifier.classify(features)
+
+        trueFeatures = []
+        for key, value in features.iteritems():
+            if value is True:
+                trueFeatures.append(key)
+
+        print "     testEmail: {}".format(testEmail)
+        print "processedEmail: {}".format(processedEmail)
+        print " featureVector: {}".format(featureVector)
+        print "  trueFeatures: {}".format(trueFeatures)
+        print "emailSentiment: {}".format(emailSentiment)
+        print "\n"
 
     classifier.show_most_informative_features(10)
 
 def main(argv):
     inputFile = argv[1]
-    isInputLabeled = ((argv[2]).lower() == 'true')
 
     # update the global stopWords list
     updateStopWordList()
 
-    if (isInputLabeled):
+    if (len(sys.argv) == 2):
+        # running with labeled emails
         classifier = processLabeledEmails(inputFile)
 
-        # testing
+        # test classifier
         testClassifier(classifier)
     else:
-        processRawEmails(inputFile)
-
+        # running with raw emails
+        outputFile = argv[2]
+        processRawEmails(inputFile, outputFile)
 
 if __name__ == "__main__":
-    if (len(sys.argv) != 3):
+    if (len(sys.argv) != 2 and len(sys.argv) != 3):
         printUsage()
     else:
         main(sys.argv)
