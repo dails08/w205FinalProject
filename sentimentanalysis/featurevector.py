@@ -95,8 +95,18 @@ def processLabeledEmails(inputFile):
     # train the claffifier
     classifier = nltk.NaiveBayesClassifier.train(emailTrainingSet)
 
-    # testing
-    # processedTestEmail = nltkpreprocessor.processEmail(someTestEmail)
+    return classifier
+
+def testClassifier(classifier):
+    testEmails = ['class www.berkeley.edu link',
+                  'some mailto:bear@berkeley.edu link',
+                  'sample email']
+
+    for testEmail in testEmails:
+        processedEmail = nltkpreprocessor.processEmail(testEmail)
+        print classifier.classify(getFeatures(getFeatureVector(processedEmail)))
+
+    classifier.show_most_informative_features(10)
 
 def main(argv):
     inputFile = argv[1]
@@ -106,7 +116,10 @@ def main(argv):
     updateStopWordList()
 
     if (isInputLabeled):
-        processLabeledEmails(inputFile)
+        classifier = processLabeledEmails(inputFile)
+
+        # testing
+        testClassifier(classifier)
     else:
         processRawEmails(inputFile)
 
