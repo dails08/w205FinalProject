@@ -5,52 +5,63 @@ from mrjob.job import MRJob
 class MRFeatureVector(MRJob):
 
     def mapper(self, _, line):
-        featureVector = []
-        stopWords = nltk.corpus.stopwords.words('english')
+        def processEmail(email):
+            # convert [InternetShortcut] URL=www.* or http://* to PERSONALURL
+            email = re.sub('((URL=www\.[^\s]+)|(URL=http://[^\s]+))','PERSONALURL',email)
+            # convert [InternetShortcut] URL=mailto to BUSINESSURL
+            email = re.sub('URL=mailto:[^\s]+','BUSINESSURL',email)
+            # remove email addresses
+            email = re.sub('[^\s]+@[^\s]+','',email)
+            # remove strings that start with </
+            email = re.sub('</[^\s]+','',email)
+            # remove numbers
+            email = re.sub('\S*\d\S*','', email)
+            # remove additional white spaces
+            email = re.sub('[\s]+', ' ', email)
+            # replace #word with word
+            email = re.sub(r'#([^\s]+)', r'\1', email)
+            # convert to lower case
+            email = email.lower()
+            # trim
+            email = email.strip('\'"')
 
-        # convert [InternetShortcut] URL=www.*, http://* to PERSONALURL
-        line = re.sub('((URL=www\.[^\s]+)|(URL=http://[^\s]+))','PERSONALURL',line)
+            return email
 
-        # convert [InternetShortcut] URL=mailto to BUSINESSURL
-        line = re.sub('URL=mailto:[^\s]+','BUSINESSURL',line)
+        def getFeatureVector(email):
+            # initialize stopWords
+            stopWords = nltk.corpus.stopwords.words('english')
 
-        # remove email addresses
-        line = re.sub('[^\s]+@[^\s]+','',line)
+            # split email into words
+            words = email.split()
 
-        # remove strings that start with </
-        line = re.sub('</[^\s]+','',line)
+            # initialize feature vector list
+            featureVector = []
 
-        # remove numbers
-        line = re.sub('\S*\d\S*','', line)
+            for w in words:
+                # strip punctuation
+                w = w.strip('\'"?,.')
 
-        # remove white spaces
-        line = re.sub('[\s]+', ' ', line)
+                # check if the word stats with an alphabet
+                val = re.search(r"^[a-zA-Z][a-zA-Z0-9]*$", w)
 
-        # replace #word with word
-        line = re.sub(r'#([^\s]+)', r'\1', line)
+                # ignore if it is a stop word or does not start with an alphabet
+                if (val is None or w in stopWords):
+                    continue
+                else:
+                    featureVector.append(w.lower())
 
-        # convert to lower case
-        line = line.lower()
+            # remove proper nouns (NNP, NNPS), personal pronouns (PRP), possessive pronouns (PRP$)
+            excludeTags = ['NNP', 'NNPS', 'PRP', 'PRP$']
+            wordTags = nltk.pos_tag(featureVector)
+            featureVector = [word[0] for word in wordTags if word[1] not in excludeTags]
 
-        # trim
-        line = line.strip('\'"')
+            return featureVector
 
-        # split input into words
-        words = line.split()
-        for word in words:
-            # strip punctuation
-            word = word.strip('\'"?,.')
+        # process input to get feature vector
+        processedEmail = processEmail(line)
+        featureVector = getFeatureVector(processedEmail)
 
-            # ignore if word is a stop word or is not alpha-numeric
-            if (re.search(r"^[a-zA-Z][a-zA-Z0-9]*$", word) is None or word in stopWords):
-                continue
-            else:
-                featureVector.append(word.lower())
-
-        # remove proper nouns (NNP, NNPS), personal pronouns (PRP), and possessive pronouns (PRP$)
-        excludeTags = ['NNP', 'NNPS', 'PRP', 'PRP$']
-        wordTags = nltk.pos_tag(featureVector)
-        featureVector = [word[0] for word in wordTags if word[1] not in excludeTags]
+        # return the feature vector
         for feature in featureVector:
             yield (feature.lower(), 1)
 
