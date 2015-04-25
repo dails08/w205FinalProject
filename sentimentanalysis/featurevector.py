@@ -1,63 +1,161 @@
-import nltkpreprocessor
+#!/usr/bin/python
 
-#initialize stopWords
+import nltk
+import nltkpreprocessor
+import re
+import sys
+
+# initialize featureList and stopWords
+featureList = []
 stopWords = []
 
-#start replaceTwoOrMore
-def replaceTwoOrMore(s):
-    #look for 2 or more repetitions of character and replace with the character itself
-    pattern = re.compile(r"(.)\1{1,}", re.DOTALL)
-    return pattern.sub(r"\1\1", s)
-#end
+def printUsage():
+    print "featurevector.py <rawEmailFile> <featureVectorOutputFile>"
+    print "featurevector.py <labeledEmailFile>"
 
-#start getStopWordList
-def getStopWordList(stopWordListFileName):
-    #read the stopwords file and build a list
-    stopWords = []
-    stopWords.append('AT_USER')
-    stopWords.append('URL')
+def updateStopWordList():
+    global stopWords
+    stopWords = nltk.corpus.stopwords.words('english')
+    # append any other stop words
+    # stopWords.append('word')
 
-    fp = open(stopWordListFileName, 'r')
-    line = fp.readline()
-    while line:
-        word = line.strip()
-        stopWords.append(word)
-        line = fp.readline()
-    fp.close()
-    return stopWords
-#end
-
-#start getfeatureVector
 def getFeatureVector(email):
+    global stopWords
+    excludeTags = ['NNP', 'NNPS', 'PRP', 'PRP$']
     featureVector = []
-    #split email into words
+
+    # split email into words
     words = email.split()
     for w in words:
-        #replace two or more with two occurrences
-        w = replaceTwoOrMore(w)
-        #strip punctuation
+        # strip punctuation
         w = w.strip('\'"?,.')
-        #check if the word stats with an alphabet
+
+        # check if the word stats with an alphabet
         val = re.search(r"^[a-zA-Z][a-zA-Z0-9]*$", w)
-        #ignore if it is a stop word
-        if(w in stopWords or val is None):
+
+        # ignore if it is a stop word or does not start with an alphabet
+        if (val is None or w in stopWords):
             continue
         else:
             featureVector.append(w.lower())
+
+    # remove proper nouns (NNP, NNPS), personal pronouns (PRP), possessive pronouns (PRP$)
+    wordTags = nltk.pos_tag(featureVector)
+    featureVector = [word[0] for word in wordTags if word[1] not in excludeTags]
+
     return featureVector
-#end
 
-#Read the emails one by one and process it
-fp = open('data/sampleEmails.txt', 'r')
-line = fp.readline()
+def getFeatures(email):
+    global featureList
+    features = {}
 
-st = open('data/feature_list/stopwords.txt', 'r')
-stopWords = getStopWordList('data/feature_list/stopwords.txt')
+    emailWords = set(email)
+    for word in featureList:
+        features['contains(%s)' % word] = (word in emailWords)
 
-while line:
-    processedEmail = processEmail(line)
-    featureVector = getFeatureVector(processedEmail)
-    print featureVector
-    line = fp.readline()
-#end loop
-fp.close()
+    return features
+
+def processRawEmails(inputFile, outputFile):
+    fr = open(inputFile, 'rU')
+    fw = open(outputFile, 'w')
+
+    featureList = []
+
+    # read the emails and process one by one
+    line = fr.readline()
+    while line:
+        processedEmail = nltkpreprocessor.processEmail(line)
+        featureVector = getFeatureVector(processedEmail)
+        featureList.extend(featureVector)
+        line = fr.readline()
+
+    # write feature list to output file
+    featureList = list(set(featureList))
+    for feature in featureList:
+        fw.write("{}\n".format(feature))
+
+    # close file handles
+    fr.close()
+    fw.close()
+
+def processLabeledEmails(inputFile):
+    global featureList
+    emailSentiments = []
+
+    fr = open(inputFile, 'rU')
+    line = fr.readline()
+    while line:
+        emailItems = line.split('\t')
+        emailLine = emailItems[0]
+        sentiment = emailItems[1].rstrip()
+
+        processedEmail = nltkpreprocessor.processEmail(emailLine)
+        featureVector = getFeatureVector(processedEmail)
+        emailSentiments.append((featureVector, sentiment))
+        featureList.extend(featureVector)
+
+        line = fr.readline()
+
+    # close file handle
+    fr.close()
+
+    # remove dupes from featureList
+    featureList = list(set(featureList))
+
+    # generate training set
+    emailTrainingSet = nltk.classify.util.apply_features(getFeatures, emailSentiments)
+
+    # train the classifier
+    classifier = nltk.NaiveBayesClassifier.train(emailTrainingSet)
+
+    return classifier
+
+def testClassifier(classifier):
+    testEmails = ['last questions',
+                  'contact tyrion lannister in corporate for bankruptcy questions',
+                  'family - they hope for some money from you',
+                  'URL=mailto:ceo@enron.com as the last contact',
+                  'winterfell is in westeros or essos?']
+
+    for testEmail in testEmails:
+        processedEmail = nltkpreprocessor.processEmail(testEmail)
+        featureVector = getFeatureVector(processedEmail)
+        features = getFeatures(featureVector)
+        emailSentiment = classifier.classify(features)
+
+        trueFeatures = []
+        for key, value in features.iteritems():
+            if value is True:
+                trueFeatures.append(key)
+
+        print "     testEmail: {}".format(testEmail)
+        print "processedEmail: {}".format(processedEmail)
+        print " featureVector: {}".format(featureVector)
+        print "  trueFeatures: {}".format(trueFeatures)
+        print "emailSentiment: {}".format(emailSentiment)
+        print "\n"
+
+    classifier.show_most_informative_features(10)
+
+def main(argv):
+    inputFile = argv[1]
+
+    # update the global stopWords list
+    updateStopWordList()
+
+    if (len(sys.argv) == 2):
+        # running with labeled emails
+        classifier = processLabeledEmails(inputFile)
+
+        # test classifier
+        testClassifier(classifier)
+    else:
+        # running with raw emails
+        outputFile = argv[2]
+        processRawEmails(inputFile, outputFile)
+
+if __name__ == "__main__":
+    if (len(sys.argv) != 2 and len(sys.argv) != 3):
+        printUsage()
+    else:
+        main(sys.argv)

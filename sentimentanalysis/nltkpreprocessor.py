@@ -1,22 +1,18 @@
 #!/usr/bin/python
 
-#import string
 import string
-#import regex
 import re
-#import nltk
-import nltk
-from nltk.tokenize import RegexpTokenizer
+import sys
 
+def printUsage():
+    print "nltkpreprocessor.py <inputEmailFile> <processedEmailFile>"
 
-#start process_email
 def processEmail(email):
-    # process the emails
     #Convert [InternetShortcut] URL=www.* or http://* to PERSONALURL
     email = re.sub('((URL=www\.[^\s]+)|(URL=http://[^\s]+))','PERSONALURL',email)
     #Convert [InternetShortcut] URL=mailto to BUSINESSURL
     email = re.sub('URL=mailto:[^\s]+','BUSINESSURL',email)
-    #Remove email addresses 
+    #Remove email addresses
     email = re.sub('[^\s]+@[^\s]+','',email)
     #Remove strings that start with </
     email = re.sub('</[^\s]+','',email)
@@ -30,18 +26,29 @@ def processEmail(email):
     email = email.lower()
     #trim
     email = email.strip('\'"')
-    
+
     return email
-#end
 
-#Read the emails one by one and process it
-fr = open('emails.txt', 'rU')
-fw = open('processedemails.txt', 'w')
-line = fr.readline()
+def main(argv):
+    inputFile = argv[1]
+    outputFile = argv[2]
 
-while line:
-    processedEmail = processEmail(line)
-    fw.write(processedEmail + '\r\n')
+    fr = open(inputFile, 'rU')
+    fw = open(outputFile, 'w')
+
+    # read the emails and process one by one
     line = fr.readline()
-#end loop
-fr.close()
+    while line:
+        processedEmail = processEmail(line)
+        fw.write(processedEmail + '\r\n')
+        line = fr.readline()
+
+    # close the file handles
+    fr.close()
+    fw.close()
+
+if __name__ == "__main__":
+    if (len(sys.argv) != 3):
+        printUsage()
+    else:
+        main(sys.argv)
