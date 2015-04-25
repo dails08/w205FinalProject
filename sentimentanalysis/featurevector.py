@@ -21,6 +21,7 @@ def updateStopWordList():
 
 def getFeatureVector(email):
     global stopWords
+    excludeTags = ['NNP', 'NNPS', 'PRP', 'PRP$']
     featureVector = []
 
     # split email into words
@@ -37,6 +38,10 @@ def getFeatureVector(email):
             continue
         else:
             featureVector.append(w.lower())
+
+    # remove proper nouns (NNP, NNPS), personal pronouns (PRP), possessive pronouns (PRP$)
+    wordTags = nltk.pos_tag(featureVector)
+    featureVector = [word[0] for word in wordTags if word[1] not in excludeTags]
 
     return featureVector
 
