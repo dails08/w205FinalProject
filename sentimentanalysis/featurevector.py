@@ -2,6 +2,7 @@
 
 import nltk
 import nltkpreprocessor
+import pickle
 import re
 import sys
 
@@ -107,6 +108,11 @@ def processLabeledEmails(inputFile):
 
     # train the classifier
     classifier = nltk.NaiveBayesClassifier.train(emailTrainingSet)
+
+    # save the classifier
+    classifierPickle = open('email_classifier.pickle', 'wb')
+    pickle.dump(classifier, classifierPickle)
+    classifierPickle.close()
 
     return classifier
 
