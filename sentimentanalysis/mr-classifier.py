@@ -1,10 +1,30 @@
 import nltk
 import pickle
 import re
+import os.path
 from mrjob.job import MRJob
+from mrjob.step import MRStep
+from boto.s3.connection import S3Connection
+from boto.s3.key import Key
+import boto
 
 class MREmailClassifier(MRJob):
 
+    #def get_helper_files(self):
+        
+        #if not os.path.isfile("processed_mr_featurevector.txt"):
+            #s3conn = boto.s3.connect_to_region("us-east-1")
+            #bucket = s3conn.get_bucket("chrisdailey1-enron")
+            #k = Key(bucket)
+            #k.key = "/helperfiles/processed_mr_featurevector.txt"
+            #k.get_contents_to_filename("processed_mr_featurevector.txt")
+        #if not os.path.isfile("email_classifier.pickle"):
+            #s3conn = boto.s3.connect_to_region("us-east-1")
+            #bucket = s3conn.get_bucket("chrisdailey1-enron")
+            #k = Key(bucket)
+            #k.key = "/helperfiles/email_classifier.pickle"
+            #k.get_contents_to_filename("email_classifier.pickle")
+        
     def mapper(self, _, line):
         def processEmail(email):
             # convert [InternetShortcut] URL=www.* or http://* to PERSONALURL
@@ -105,6 +125,14 @@ class MREmailClassifier(MRJob):
 
     def reducer(self, key, values):
         yield key, sum(values)
+   
+        
+    #def steps(self):
+        #return [MRStep(mapper_init=self.get_helper_files,
+                #mapper=self.mapper,
+                #reducer=self.reducer)]
+        
+        
 
 if __name__ == '__main__':
     MREmailClassifier.run()
