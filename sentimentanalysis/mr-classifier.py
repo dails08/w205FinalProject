@@ -124,9 +124,9 @@ class MREmailClassifier(MRJob):
         sentiment = classifier.classify(features)
 
         # format the output
-        output = line + "\t" + sentiment
+        #output = line + "\t" + sentiment
         #output = "{}\t{}".format(line, sentiment)
-        yield (output, 1)
+        yield (sentiment, 1)
 
     def reducer(self, key, values):
         yield key, sum(values)
