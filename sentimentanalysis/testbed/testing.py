@@ -35,7 +35,7 @@ def getFeatureList():
 	featureList = []
 
 	# get features from the feature list file
-	featureFile = open('processed_mr_featurevector.txt', 'r')
+	featureFile = open('reprocessed_mr_featurevector.txt', 'r')
 	feature = featureFile.readline()
 	while feature:
 		featureList.append(feature.split('\t')[0])
