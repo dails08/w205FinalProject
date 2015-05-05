@@ -1,3 +1,7 @@
-python mr-classifier.py -r emr 's3://chrisdailey1-enron/totallined/' --output-dir=s3://chrisdailey1-enron/output/classification/ --conf-path ./mrjob.conf
+# feature vector
+python mr-featurevector.py -r emr 's3://chrisdailey1-enron/totallined/' --no-output --output-dir=s3://chrisdailey1-enron/output/featurevector/ --conf-path ./mrfvjob.conf
+
+# classifier
+python mr-classifier.py -r emr 's3://chrisdailey1-enron/totallined/' --no-output --output-dir=s3://chrisdailey1-enron/output/classification/ --conf-path ./mrjob.conf
 
 python mr-classifier.py  --output-dir=s3://chrisdailey1-enron/output/classification/ --conf-path ./mrjob.conf
