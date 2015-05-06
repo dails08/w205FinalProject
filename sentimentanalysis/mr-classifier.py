@@ -2,8 +2,12 @@ import nltk
 import pickle
 import re
 import os.path
+import boto
 from mrjob.job import MRJob
 from mrjob.step import MRStep
+
+boto.config.add_section('Boto') 
+boto.config.set('Boto','http_socket_timeout','300') 
 
 # initialize stopWords
 stopWords = nltk.corpus.stopwords.words('english')
