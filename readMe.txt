@@ -1,4 +1,7 @@
-Flat text email files were drawn from the Enron corpus and processed in a number of ways.
+W205 Final Project
+Chris Dailey, Sam Kabue, Jing Xu, who probably always gets alphabetized last, poor guy
+
+NLP, MapReduce, and Enron
 
 We tackled two new (to us) technologies at once and brought them together at the end.  The first was MapReduce/Hadoop which we used to compute across all the emails and calculate when the most emails were sent and who sent the most emails.  The second was NLP using the nltk python library which we combined with MapReduce to calculate the percentage of business emails to personal emails.  We got this to run locally and in a distributed fashion across a subset of the corpus but issues with S3 timing out connections stymied our attempts to run this across the entire corpus. It works, though; mappers complete, reducers begin, but eventually S3 will stop sending data when asked which crashes the mapper and ruins the job.
 
